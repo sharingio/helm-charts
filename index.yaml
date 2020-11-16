@@ -1,0 +1,14 @@
+apiVersion: v1
+entries:
+  powerdns:
+  - apiVersion: v2
+    appVersion: 4.3.4
+    created: "2020-11-16T16:02:57.013088+13:00"
+    description: A Helm chart for Kubernetes
+    digest: 09c2da9e2137b3febcd005158d62ba175256a9106bc5528154dbedc4337b0d5e
+    name: powerdns
+    type: application
+    urls:
+    - https://github.com/sharingio/helm-charts/releases/download/powerdns-0.1.11/powerdns-0.1.11.tgz
+    version: 0.1.11
+generated: "2020-11-16T16:02:55.981717+13:00"
