@@ -102,5 +102,7 @@ spec:
           - containerPort: 8081
             name: api
             protocol: TCP
+          volumeMounts:
           {{- toYaml .Values.powerdns.extraVolumeMounts | nindent 10 }}
+      volumes:
       {{- toYaml .Values.powerdns.extraVolumes | nindent 8 }}
