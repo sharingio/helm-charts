@@ -3,9 +3,12 @@
 How to install chart repository:
 
 ```
-helm repo add aecharts https://raw.githubusercontent.com/aescanero/helm-charts/master/
+helm repo add sharingio https://raw.githubusercontent.com/sharingio/helm-charts/gh-pages/
 helm repo update
 ```
 
-Look PowerDNS chart at (https://github.com/aescanero/helm-charts/tree/master/charts/powerdns)
+## Charts
+- [PowerDNS](https://github.com/sharingio/helm-charts/tree/master/charts/powerdns)
 
+## Credits
+- forked from [aescanero](https://github.com/aescanero)
