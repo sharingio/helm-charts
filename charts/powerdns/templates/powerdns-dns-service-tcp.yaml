@@ -14,6 +14,10 @@ spec:
   {{- if .Values.service.dns.tcp.loadBalancerIP }}
   loadBalancerIP: {{ .Values.service.dns.tcp.loadBalancerIP }}
   {{- end }}
+  {{- if .Values.service.dns.tcp.externalIPs }}
+  externalIPs:
+    {{- toYaml .Values.service.dns.tcp.externalIPs | nindent 4 }}
+  {{- end }}
   ports:
     - port: {{ .Values.service.dns.tcp.port }}
       targetPort: dns-tcp

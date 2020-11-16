@@ -14,6 +14,10 @@ spec:
   {{- if .Values.service.dns.udp.loadBalancerIP }}
   loadBalancerIP: {{ .Values.service.dns.udp.loadBalancerIP }}
   {{- end }}
+  {{- if .Values.service.dns.udp.externalIPs }}
+  externalIPs:
+    {{- toYaml .Values.service.dns.udp.externalIPs | nindent 4 }}
+  {{- end }}
   ports:
     - port: {{ .Values.service.dns.udp.port }}
       targetPort: dns-udp
