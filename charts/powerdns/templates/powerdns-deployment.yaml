@@ -91,6 +91,7 @@ spec:
               secretKeyRef:
                 name: "{{ template "powerdns.fullname" . }}-secret"
                 key: MYSQL_PASS
+          {{- toYaml .Values.powerdns.extraEnv | nindent 10 }}
           ports:
           - containerPort: 53
             name: dns-udp
@@ -101,3 +102,5 @@ spec:
           - containerPort: 8081
             name: api
             protocol: TCP
+          {{- toYaml .Values.powerdns.extraVolumeMounts | nindent 10 }}
+      {{- toYaml .Values.powerdns.extraVolumes | nindent 8 }}

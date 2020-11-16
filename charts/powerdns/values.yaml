@@ -31,15 +31,7 @@ soa_minimum_ttl: "1200"
 default_soa_name: "ns1.external.local"
 apikey: foobarbaz
 
-metallb:
-  address_pool: default
-
 powerdns:
-  enabled: true
-  image:
-    repository: pschiffe/pdns-mysql
-    tag: alpine
-    pullPolicy: IfNotPresent
   domain: external.local
   master: "yes"
   api: "yes"
@@ -60,6 +52,9 @@ powerdns:
   limits:
     memory: "512Mi"
     cpu: "300m"
+  extraEnv: []
+  extraVolumes: []
+  extraVolumeMounts: []
 
 mariadb:
   enabled: true
@@ -100,9 +95,9 @@ admin:
   mysql_user: "powerdns"
   ingress:
     enabled: "false"
-    class: "traefik"
     path: "/"
     hostname: "powerdns-admin"
+    annotations: {}
   requests:
     memory: "512Mi"
     cpu: "300m"
