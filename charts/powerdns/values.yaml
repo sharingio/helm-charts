@@ -99,6 +99,11 @@ admin:
     enabled: "false"
     path: "/"
     hostname: "powerdns-admin"
+    tls: []
+    #  - secretName: chart-example-tls
+    #    hosts:
+    #      - chart-example.local
+
     annotations: {}
   requests:
     memory: "512Mi"
