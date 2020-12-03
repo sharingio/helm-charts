@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "tmate.fullname" . }}-postgres
+  labels:
+    app: postgres
+    app.kubernetes.io/part-of: tmate
+    {{- include "tmate.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: 5432
+      targetPort: 5432
+      protocol: TCP
+      name: postgres
+  selector:
+    app: postgres
+    app.kubernetes.io/part-of: tmate
+    {{- include "tmate.selectorLabels" . | nindent 4 }}

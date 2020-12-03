@@ -1,0 +1,39 @@
+kind: StatefulSet
+apiVersion: apps/v1
+metadata:
+  name: {{ include "tmate.fullname" . }}-postgres
+  labels:
+    app: postgres
+    app.kubernetes.io/part-of: tmate
+    {{- include "tmate.labels" . | nindent 4 }}
+spec:
+  serviceName: {{ include "tmate.fullname" . }}-postgres
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+      app.kubernetes.io/part-of: tmate
+      {{- include "tmate.labels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        app: postgres
+        app.kubernetes.io/part-of: tmate
+        {{- include "tmate.labels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:12-alpine
+          ports:
+            - containerPort: 5432
+          env:
+          - name: POSTGRES_USER
+            value: tmate
+          - name: POSTGRES_DB
+            value: tmate
+          - name: POSTGRES_PASSWORD
+            value: tmate
+          - name: PGUSER
+            value: tmate
+          - name: PGDATABASE
+            value: tmate

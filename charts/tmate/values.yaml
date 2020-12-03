@@ -79,6 +79,13 @@ master:
     # Overrides the image tag whose default is the chart appVersion.
     tag: ""
 
+  migrations:
+    image:
+      repository: sharingio/tmate-server
+      pullPolicy: IfNotPresent
+      # Overrides the image tag whose default is the chart appVersion.
+      tag: "2020.12.04"
+
   nameOverride: ""
   fullnameOverride: ""
 
