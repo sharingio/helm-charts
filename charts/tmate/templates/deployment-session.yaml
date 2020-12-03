@@ -41,7 +41,7 @@ spec:
           imagePullPolicy: {{ .Values.session.sshServer.image.pullPolicy }}
           ports:
             - name: ssh
-              containerPort: {{ .Values.session.service.port }}
+              containerPort: {{ .Values.session.sshServer.service.port }}
               protocol: TCP
           livenessProbe:
             tcpSocket:
@@ -57,9 +57,11 @@ spec:
             - name: SSH_KEYS_PATH
               value: /etc/tmate-keys
             - name: SSH_PORT_ADVERTISE
-              value: {{ .Values.session.service.port | quote }}
+              value: {{ .Values.session.sshServer.service.port | quote }}
+            - name: SSH_PORT_LISTEN
+              value: {{ .Values.session.sshServer.bindPort | quote }}
             - name: SSH_HOSTNAME
-              value: {{ (first .Values.session.ingress.hosts).host }}
+              value: {{ (first .Values.master.ingress.hosts).host }}
             {{- if .Values.session.extraEnv }}
             {{- toYaml .Values.session.extraEnv }}
             {{- end }}
@@ -100,7 +102,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: {{ include "tmate.fullname" . }}-secret
-                  key: wsapiKey
+                  key: wsAPIKey
             - name: DAEMON_HMAC_KEY
               valueFrom:
                 secretKeyRef:
@@ -133,6 +135,6 @@ spec:
       volumes:
         - name: secret-ssh-keys
           secret:
-            secretName: {{ include "tmate.fullname" . }}-ssh-keys
+            secretName: {{ include "tmate.fullname" . }}-secret-sshkeys
         - name: tmate-unix-sockets
           emptyDir: {}
