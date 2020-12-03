@@ -1,0 +1,138 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "tmate.fullname" . }}-session
+  labels:
+    app: tmate-session
+    app.kubernetes.io/part-of: tmate
+    {{- include "tmate.labels" . | nindent 4 }}
+spec:
+{{- if not .Values.session.autoscaling.enabled }}
+  replicas: {{ .Values.session.replicaCount }}
+{{- end }}
+  selector:
+    matchLabels:
+      app: tmate-session
+      app.kubernetes.io/part-of: tmate
+      {{- include "tmate.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+    {{- with .Values.session.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      labels:
+        app: tmate-session
+        app.kubernetes.io/part-of: tmate
+        {{- include "tmate.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "tmate.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.session.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}-ssh-server
+          securityContext:
+            {{- toYaml .Values.session.securityContext | nindent 12 }}
+          image: "{{ .Values.session.sshServer.image.repository }}:{{ .Values.session.sshServer.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.session.sshServer.image.pullPolicy }}
+          ports:
+            - name: ssh
+              containerPort: {{ .Values.session.service.port }}
+              protocol: TCP
+          livenessProbe:
+            tcpSocket:
+              port: ssh
+          readinessProbe:
+            tcpSocket:
+              port: ssh
+          resources:
+            {{- toYaml .Values.session.resources | nindent 12 }}
+          env:
+            - name: HAS_WEBSOCKET
+              value: "1"
+            - name: SSH_KEYS_PATH
+              value: /etc/tmate-keys
+            - name: SSH_PORT_ADVERTISE
+              value: {{ .Values.session.service.port | quote }}
+            - name: SSH_HOSTNAME
+              value: {{ (first .Values.session.ingress.hosts).host }}
+            {{- if .Values.session.extraEnv }}
+            {{- toYaml .Values.session.extraEnv }}
+            {{- end }}
+          volumeMounts:
+            - name: secret-ssh-keys
+              mountPath: /etc/tmate-keys
+            - name: tmate-unix-sockets
+              mountPath: /tmp/tmate/sessions
+        - name: {{ .Chart.Name }}-websocket
+          securityContext:
+            {{- toYaml .Values.session.websocket.securityContext | nindent 12 }}
+          image: "{{ .Values.session.websocket.image.repository }}:{{ .Values.session.websocket.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.session.websocket.image.pullPolicy }}
+          livenessProbe:
+            tcpSocket:
+              port: http
+          readinessProbe:
+            tcpSocket:
+              port: http
+          resources:
+            {{- toYaml .Values.session.resources | nindent 12 }}
+          ports:
+          - containerPort: {{ .Values.session.websocket.bindPorts.http }}
+            name: http
+          - containerPort: {{ .Values.session.websocket.bindPorts.daemon }}
+            name: daemon
+          env:
+            - name: ERL_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: ERL_COOKIE
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "tmate.fullname" . }}-secret
+                  key: erlCookie
+            - name: INTERNAL_API_AUTH_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "tmate.fullname" . }}-secret
+                  key: wsapiKey
+            - name: DAEMON_HMAC_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "tmate.fullname" . }}-secret
+                  key: hmacKey
+            - name: WEBSOCKET_BASE_URL
+              value: "ws://{{ (first .Values.session.ingress.hosts).host }}"
+            - name: MASTER_BASE_URL
+              value: "http{{- if .Values.master.ingress.tls }}s{{- end }}://{{ (first .Values.master.ingress.hosts).host }}{{ (first (first .Values.master.ingress.hosts).paths) }}"
+            - name: USER_FACING_BASE_URL
+              value: "http{{- if .Values.master.ingress.tls }}s{{- end }}://{{ (first .Values.master.ingress.hosts).host }}{{ (first (first .Values.master.ingress.hosts).paths) }}"
+            {{- if .Values.session.extraEnv }}
+            {{- toYaml .Values.session.extraEnv }}
+            {{- end }}
+          volumeMounts:
+          - name: tmate-unix-sockets
+            mountPath: /tmp/tmate/sessions
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      volumes:
+        - name: secret-ssh-keys
+          secret:
+            secretName: {{ include "tmate.fullname" . }}-ssh-keys
+        - name: tmate-unix-sockets
+          emptyDir: {}

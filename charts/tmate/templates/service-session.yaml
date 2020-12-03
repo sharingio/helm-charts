@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "tmate.fullname" . }}-session
+  labels:
+    app: tmate-session
+    app.kubernetes.io/part-of: tmate
+    {{- include "tmate.labels" . | nindent 4 }}
+  annotations:
+  {{- toYaml .Values.session.service.annotations | nindent 4 }}
+spec:
+  type: {{ .Values.session.service.type }}
+  externalIPs:
+    {{- toYaml .Values.session.service.externalIPs | nindent 4 }}
+  ports:
+    - port: {{ .Values.session.sshServer.service.port }}
+      targetPort: {{ .Values.session.sshServer.bindPort }}
+      protocol: TCP
+      name: ssh
+    - port: {{ .Values.session.websocket.service.port }}
+      targetPort: {{ .Values.session.websocket.bindPorts.http }}
+      protocol: TCP
+      name: http
+  selector:
+    app: tmate-session
+    app.kubernetes.io/part-of: tmate
+    {{- include "tmate.selectorLabels" . | nindent 4 }}

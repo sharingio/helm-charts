@@ -1,0 +1,230 @@
+# Default values for tmate.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# config values
+#   hostname
+#   master_base_url
+#   user_facing_base_url
+#   websocket_base_url
+# will be determined from master.ingress.hosts[0].host,
+# except the last, which is determined by session.ingress.hosts[0].host
+
+hmacKey: ""
+erlCookie: ""
+secretKeyBase: ""
+wsapiKey: ""
+mailgunAPIKey: ""
+postgresURI: ""
+
+sshKeys:
+  ed25519Key: |
+    -----BEGIN OPENSSH PRIVATE KEY-----
+    b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZW
+    QyNTUxOQAAACAZnkZXaqZDN5z7jB3rquq+pmP/fc06iqckax22nuVBvQAAAJjBjM5UwYzO
+    VAAAAAtzc2gtZWQyNTUxOQAAACAZnkZXaqZDN5z7jB3rquq+pmP/fc06iqckax22nuVBvQ
+    AAAEBtklV7HWye133582v5/QjZyyFRiKe1ifU7JSGXK6ue1xmeRldqpkM3nPuMHeuq6r6m
+    Y/99zTqKpyRrHbae5UG9AAAADnBhZnlAY3JvcXVldHRlAQIDBAUGBw==
+    -----END OPENSSH PRIVATE KEY-----
+  ed25519Pub: |
+    ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIBmeRldqpkM3nPuMHeuq6r6mY/99zTqKpyRrHbae5UG9 pafy@croquette
+  RSAKey: |
+    -----BEGIN OPENSSH PRIVATE KEY-----
+    b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAABFwAAAAdzc2gtcn
+    NhAAAAAwEAAQAAAQEAngXOVbK9gRfEoeaN3bAOzCWxqW+zXaVjHbm3ZlVMPXugQssShcAG
+    ljSyVjhTcCwhc8y+q8v4QDVG2ZDZTaq0NZ5Xy9E7MmIeWzHTLIilrygNx9jkBovmr4jZup
+    tajfuiHR9cCMzVuJdi9hXff/NzzsGgV7gASqJg68BCOKbqNIfwd0zq/IpvrIrR3K+N0QPu
+    3G1WDBz0jfO2r0Tac46PMW5LhOL1+AW9iVUBQpmHyH7iPdHjXv/a8g01yz8HR5beH7YIMj
+    CQKgr5Lkk5d+TkKmSE+XmUxKApYYFQAD3y2d43KuAhzBqd7da1QQUKk76zM1d7PNci8Dkl
+    vpOIy72P1QAAA8ghwru5IcK7uQAAAAdzc2gtcnNhAAABAQCeBc5Vsr2BF8Sh5o3dsA7MJb
+    Gpb7NdpWMdubdmVUw9e6BCyxKFwAaWNLJWOFNwLCFzzL6ry/hANUbZkNlNqrQ1nlfL0Tsy
+    Yh5bMdMsiKWvKA3H2OQGi+aviNm6m1qN+6IdH1wIzNW4l2L2Fd9/83POwaBXuABKomDrwE
+    I4puo0h/B3TOr8im+sitHcr43RA+7cbVYMHPSN87avRNpzjo8xbkuE4vX4Bb2JVQFCmYfI
+    fuI90eNe/9ryDTXLPwdHlt4ftggyMJAqCvkuSTl35OQqZIT5eZTEoClhgVAAPfLZ3jcq4C
+    HMGp3t1rVBBQqTvrMzV3s81yLwOSW+k4jLvY/VAAAAAwEAAQAAAQAJMaNInyahbSWWmdhl
+    Lood3I+SoRoZd7blktmVzZ6q8Rdo63G/cGWxtY0usQZBv3+OwjnRuwNNkQv3OpM6DpV/jR
+    /kjt7X1peXjLWRoL2rDDSJDRhvPRKF4ftw/PruydYrxZhQNsK0g7JRSQKA6kQxolhW4jC6
+    JupmrP/tVeDIf4zZj8AwiAfBcLbbwtj6HWKIUsusRw800QnNDXp7nO66sQZRb+rp+ZFXn6
+    RIEtv2T4e1YVvapmmfJoSPyt1/ts2y45NJgnYyIL3kcdY6TdTWmtmnmw4vafDV72l5GlOd
+    SSBLoyhInXAVYopyxYnfyEsVeu1WpS0zcw5u+gg9kaH9AAAAgQCdhZlJ3I4056chFQiDSQ
+    eSq6KPEtL6TuTaDjm+FTKSnR9cvycIvozYtF2wqSoEd2c+JnzW7ULIAyPPKbLnKokpXXGO
+    YaeG4cItby9cNr6jlJGqamHb+sTLotAYNnBxMJsQY+WK3crcS1UUsacrq/aS070DOXWYtx
+    /VAa6b9Vm5VQAAAIEAyVnWmy81Ti0D58986PKur0Lh9E5ZjLGNxrw0Oy4D9SXhgz3eErnW
+    3/pcWIxlSqfJM+8peJg2H3ltk/OBnL3f8L5gloGtWQyDpGS40gpf1+9q8mOHBtuvYpadD/
+    H07Lpn2gfhUqgxo34sh59aQ8+Zdw5sr2Aeykhmojk4zMsA+HcAAACBAMjpdNn0ZHyBtgaN
+    uJp26kDCvuCg6V+tpzjJ9Q8vjyTpy7DQoz6PDYsZaZe+p3JKTXrzv1zg0eethP9Ynhwl7R
+    ScIP82VkCK1a5FUaa67TzPPPZj8tZBBKICQ7Gv5tGlfRsWi1X4WxE1R37ZMRPjFc1QOI4f
+    jkK57rhKLIdCNJkTAAAADnBhZnlAY3JvcXVldHRlAQIDBA==
+    -----END OPENSSH PRIVATE KEY-----
+  RSAPub: |
+    ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCeBc5Vsr2BF8Sh5o3dsA7MJbGpb7NdpWMdubdmVUw9e6BCyxKFwAaWNLJWOFNwLCFzzL6ry/hANUbZkNlNqrQ1nlfL0TsyYh5bMdMsiKWvKA3H2OQGi+aviNm6m1qN+6IdH1wIzNW4l2L2Fd9/83POwaBXuABKomDrwEI4puo0h/B3TOr8im+sitHcr43RA+7cbVYMHPSN87avRNpzjo8xbkuE4vX4Bb2JVQFCmYfIfuI90eNe/9ryDTXLPwdHlt4ftggyMJAqCvkuSTl35OQqZIT5eZTEoClhgVAAPfLZ3jcq4CHMGp3t1rVBBQqTvrMzV3s81yLwOSW+k4jLvY/V pafy@croquette
+
+imagePullSecrets: []
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: false
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+master:
+  replicaCount: 1
+
+  image:
+    repository: tmate/tmate-master
+    pullPolicy: IfNotPresent
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: ""
+
+  nameOverride: ""
+  fullnameOverride: ""
+
+  podAnnotations: {}
+
+  podSecurityContext: {}
+  # fsGroup: 2000
+
+  securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+  service:
+    type: ClusterIP
+    port: 4000
+    externalIPs: []
+    annotations: {}
+
+  ingress:
+    enabled: false
+    annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+    hosts:
+      - host: chart-example.local
+        paths: []
+    tls: []
+    #  - secretName: chart-example-tls
+    #    hosts:
+    #      - chart-example.local
+
+  resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 100
+    targetCPUUtilizationPercentage: 80
+    # targetMemoryUtilizationPercentage: 80
+
+  extraEnv: []
+
+session:
+  replicaCount: 1
+
+  sshServer:
+    image:
+      repository: tmate/tmate-ssh-server
+      pullPolicy: IfNotPresent
+      # Overrides the image tag whose default is the chart appVersion.
+      tag: ""
+
+    securityContext:
+      capabilities:
+        add:
+          - SYS_ADMIN
+    # capabilities:
+    #   drop:
+    #   - ALL
+    # readOnlyRootFilesystem: true
+    # runAsNonRoot: true
+    # runAsUser: 1000
+
+    bindPort: 2200
+    args:
+      - -v
+
+    service:
+      port: 22
+
+  service:
+    type: LoadBalancer
+    externalIPs: []
+    annotations: {}
+
+  websocket:
+    image:
+      repository: tmate/tmate-websocket
+      pullPolicy: IfNotPresent
+      # Overrides the image tag whose default is the chart appVersion.
+      tag: ""
+    securityContext: {}
+
+    service:
+      port: 4001
+
+    bindPorts:
+      http: 4001
+      daemon: 4002
+
+  nameOverride: ""
+  fullnameOverride: ""
+
+  podAnnotations: {}
+
+  podSecurityContext: {}
+  # fsGroup: 2000
+
+  ingress:
+    enabled: false
+    annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+    hosts:
+      - host: chart-example.local
+        paths: []
+    tls: []
+    #  - secretName: chart-example-tls
+    #    hosts:
+    #      - chart-example.local
+
+  resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 100
+    targetCPUUtilizationPercentage: 80
+    # targetMemoryUtilizationPercentage: 80
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

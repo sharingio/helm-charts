@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "tmate.fullname" . }}-master
+  labels:
+    app: tmate-master
+    app.kubernetes.io/part-of: tmate
+    {{- include "tmate.labels" . | nindent 4 }}
+  annotations:
+  {{- toYaml .Values.master.service.annotations | nindent 4 }}
+spec:
+  type: {{ .Values.master.service.type }}
+  externalIPs:
+    {{- toYaml .Values.master.service.externalIPs | nindent 4 }}
+  ports:
+    - port: {{ .Values.master.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app: tmate-master
+    app.kubernetes.io/part-of: tmate
+    {{- include "tmate.selectorLabels" . | nindent 4 }}

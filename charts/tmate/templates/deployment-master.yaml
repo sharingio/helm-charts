@@ -1,0 +1,115 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "tmate.fullname" . }}-master
+  labels:
+    app: tmate-master
+    app.kubernetes.io/part-of: tmate
+    {{- include "tmate.labels" . | nindent 4 }}
+spec:
+{{- if not .Values.master.autoscaling.enabled }}
+  replicas: {{ .Values.master.replicaCount }}
+{{- end }}
+  selector:
+    matchLabels:
+      app: tmate-master
+      app.kubernetes.io/part-of: tmate
+      {{- include "tmate.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+    {{- with .Values.master.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      labels:
+        app: tmate-master
+        app.kubernetes.io/part-of: tmate
+        {{- include "tmate.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "tmate.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.master.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.master.securityContext | nindent 12 }}
+          image: "{{ .Values.master.image.repository }}:{{ .Values.master.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.master.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort:
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          resources:
+            {{- toYaml .Values.master.resources | nindent 12 }}
+          env:
+            - name: ERL_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: MASTER_BASE_URL
+              value: "http{{- if .Values.master.ingress.tls }}s{{- end }}://{{ (first .Values.master.ingress.hosts).host }}{{ (first (first .Values.master.ingress.hosts).paths) }}"
+            - name: SECRET_KEY_BASE
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "tmate.fullname" . }}-secret
+                  key: secretKeyBase
+            - name: INTERNAL_API_AUTH_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "tmate.fullname" . }}-secret
+                  key: wsapiKey
+            - name: PG_URI
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "tmate.fullname" . }}-secret
+                  key: postgresURI
+            - name: ERL_COOKIE
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "tmate.fullname" . }}-secret
+                  key: erlCookie
+            - name: MAILGUN_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "tmate.fullname" . }}-secret
+                  key: mailgunAPIKey
+            {{- if .Values.master.extraEnv }}
+            {{- toYaml .Values.master.extraEnv | nindent 12 }}
+            {{- end }}
+      initContainers:
+      - name: {{ .Chart.Name }}-migrate
+        image: tmate/tmate-master:latest
+        command:
+          - /bin/sh
+          - -c
+          - mix do ecto.create, ecto.migrate
+        env:
+        - name: PG_URI
+          valueFrom:
+            secretKeyRef:
+              name: {{ include "tmate.fullname" . }}-secret
+              key: PG_URI
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
